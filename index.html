@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a0f0a">
+    <title>☕ COFFEE MASTER PRO - 專業咖啡沖煮模擬器</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 背景粒子系統 -->
+    <div class="particles-bg" id="particlesBg"></div>
+    <canvas id="particleCanvas"></canvas>
+    
+    <!-- 主容器 -->
+    <div class="app-container">
+        <!-- 頂部導航欄 -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <div class="brand-icon">☕</div>
+                <div class="brand-text">
+                    <div class="brand-title">COFFEE MASTER</div>
+                    <div class="brand-subtitle">Professional Brewing Simulator</div>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn" onclick="viewLeaderboard()">
+                    <span class="btn-icon">🏆</span>
+                    <span class="btn-text">排行榜</span>
+                </button>
+                <button class="nav-btn" onclick="showStats()">
+                    <span class="btn-icon">📊</span>
+                    <span class="btn-text">統計</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 主內容區 -->
+        <main class="main-content">
+            <!-- 左側：視覺化沖煮區 -->
+            <section class="brew-visual-section">
+                <div class="visual-card glass-card">
+                    <div class="card-header">
+                        <h2 class="card-title">沖煮視覺化</h2>
+                        <div class="status-indicator" id="brewStatus">
+                            <span class="status-dot"></span>
+                            <span class="status-text">就緒</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 3D 沖煮場景 -->
+                    <div class="brew-scene" id="brewScene">
+                        <div class="scene-container">
+                            <!-- V60 濾杯 -->
+                            <div class="v60-setup">
+                                <div class="v60-dripper-pro">
+                                    <div class="dripper-rim"></div>
+                                    <div class="dripper-cone">
+                                        <div class="spiral-pattern"></div>
+                                        <div class="coffee-bed" id="coffeeBed"></div>
+                                        <div class="water-stream" id="waterStream"></div>
+                                        <div class="bloom-animation" id="bloomAnim"></div>
+                                    </div>
+                                    <div class="dripper-outlet"></div>
+                                </div>
+                                
+                                <!-- 玻璃壺 -->
+                                <div class="glass-server">
+                                    <div class="server-body">
+                                        <div class="coffee-fill" id="coffeeFill">
+                                            <div class="coffee-wave"></div>
+                                        </div>
+                                        <div class="server-markings">
+                                            <div class="marking">400ml</div>
+                                            <div class="marking">300ml</div>
+                                            <div class="marking">200ml</div>
+                                            <div class="marking">100ml</div>
+                                        </div>
+                                    </div>
+                                    <div class="server-handle"></div>
+                                    <div class="server-spout"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- 蒸氣粒子 -->
+                            <div class="steam-particles" id="steamParticles"></div>
+                            
+                            <!-- 環境光效 -->
+                            <div class="ambient-glow"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- 進度條 -->
+                    <div class="brew-progress-bar" id="progressBar">
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <div class="progress-glow"></div>
+                        </div>
+                        <div class="progress-info">
+                            <span class="progress-stage" id="progressStage">準備中</span>
+                            <span class="progress-time" id="progressTime">00:00</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 即時數據 -->
+                    <div class="live-data" id="liveData">
+                        <div class="data-item">
+                            <div class="data-label">注水量</div>
+                            <div class="data-value" id="waterVolume">0ml</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">萃取量</div>
+                            <div class="data-value" id="extractVolume">0ml</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">溫度</div>
+                            <div class="data-value" id="tempValue">--°C</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">TDS</div>
+                            <div class="data-value" id="tdsValue">--%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 咖啡豆資訊卡 -->
+                <div class="bean-card glass-card">
+                    <div class="bean-visual" id="beanVisual">
+                        <div class="bean-image"></div>
+                    </div>
+                    <div class="bean-info">
+                        <h3 class="bean-name" id="beanName">衣索比亞 耶加雪菲</h3>
+                        <div class="bean-meta">
+                            <span class="meta-tag" id="beanProcess">水洗</span>
+                            <span class="meta-tag" id="beanRoast">中淺焙</span>
+                        </div>
+                        <div class="flavor-tags" id="flavorTags">
+                            <span class="flavor-tag">花香</span>
+                            <span class="flavor-tag">柑橘</span>
+                            <span class="flavor-tag">莓果</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右側：控制面板 -->
+            <section class="control-section">
+                <div class="control-card glass-card">
+                    <div class="card-header">
+                        <h2 class="card-title">沖煮參數</h2>
+                        <button class="preset-btn" onclick="loadPreset()">
+                            <span>⚡</span> 載入預設
+                        </button>
+                    </div>
+                    
+                    <div class="controls-grid">
+                        <!-- 咖啡豆選擇 -->
+                        <div class="control-item full-width">
+                            <label class="control-label">
+                                <span class="label-icon">🌍</span>
+                                <span class="label-text">咖啡豆產地</span>
+                            </label>
+                            <select id="beanSelect" class="modern-select">
+                                <option value="ethiopia">🇪🇹 衣索比亞 耶加雪菲</option>
+                                <option value="colombia">🇨🇴 哥倫比亞 薇拉</option>
+                                <option value="kenya">🇰🇪 肯亞 AA</option>
+                                <option value="brazil">🇧🇷 巴西 聖保羅</option>
+                                <option value="guatemala">🇬🇹 瓜地馬拉 安提瓜</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 研磨度 -->
+                        <div class="control-item">
+                            <label class="control-label">
+                                <span class="label-icon">⚙️</span>
+                                <span class="label-text">研磨度</span>
+                                <span class="value-badge" id="grindValue">600μm</span>
+                            </label>
+                            <div class="modern-slider">
+                                <input type="range" id="grindSlider" min="200" max="1000" value="600" step="1">
+                                <div class="slider-fill"></div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <div class="slider-labels">
+                                <span>極細</span>
+                                <span>中</span>
+                                <span>極粗</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 水溫 -->
+                        <div class="control-item">
+                            <label class="control-label">
+                                <span class="label-icon">🌡️</span>
+                                <span class="label-text">水溫</span>
+                                <span class="value-badge temp" id="tempBadge">92°C</span>
+                            </label>
+                            <div class="modern-slider">
+                                <input type="range" id="tempSlider" min="80" max="100" value="92" step="1">
+                                <div class="slider-fill"></div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <div class="slider-labels">
+                                <span>80°C</span>
+                                <span>90°C</span>
+                                <span>100°C</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 咖啡粉量 -->
+                        <div class="control-item">
+                            <label class="control-label">
+                                <span class="label-icon">⚖️</span>
+                                <span class="label-text">咖啡粉量</span>
+                                <span class="value-badge" id="coffeeValue">20g</span>
+                            </label>
+                            <div class="modern-slider">
+                                <input type="range" id="coffeeSlider" min="15" max="30" value="20" step="1">
+                                <div class="slider-fill"></div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <div class="slider-labels">
+                                <span>15g</span>
+                                <span>22g</span>
+                                <span>30g</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 水量 -->
+                        <div class="control-item">
+                            <label class="control-label">
+                                <span class="label-icon">💧</span>
+                                <span class="label-text">總水量</span>
+                                <span class="value-badge" id="waterValue">300ml</span>
+                            </label>
+                            <div class="modern-slider">
+                                <input type="range" id="waterSlider" min="200" max="400" value="300" step="1">
+                                <div class="slider-fill"></div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <div class="slider-labels">
+                                <span>200ml</span>
+                                <span>300ml</span>
+                                <span>400ml</span>
+                            </div>
+                            <div class="ratio-indicator" id="ratioIndicator">粉水比 1:15</div>
+                        </div>
+                        
+                        <!-- 悶蒸時間 -->
+                        <div class="control-item">
+                            <label class="control-label">
+                                <span class="label-icon">⏱️</span>
+                                <span class="label-text">悶蒸時間</span>
+                                <span class="value-badge" id="bloomValue">30s</span>
+                            </label>
+                            <div class="modern-slider">
+                                <input type="range" id="bloomSlider" min="20" max="45" value="30" step="1">
+                                <div class="slider-fill"></div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <div class="slider-labels">
+                                <span>20s</span>
+                                <span>32s</span>
+                                <span>45s</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 總時間 -->
+                        <div class="control-item">
+                            <label class="control-label">
+                                <span class="label-icon">⏲️</span>
+                                <span class="label-text">總沖煮時間</span>
+                                <span class="value-badge" id="totalValue">2:30</span>
+                            </label>
+                            <div class="modern-slider">
+                                <input type="range" id="totalSlider" min="120" max="240" value="150" step="1">
+                                <div class="slider-fill"></div>
+                                <div class="slider-thumb"></div>
+                            </div>
+                            <div class="slider-labels">
+                                <span>2:00</span>
+                                <span>2:30</span>
+                                <span>4:00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 開始按鈕 -->
+                    <button class="brew-start-btn" id="brewStartBtn">
+                        <span class="btn-bg"></span>
+                        <span class="btn-content">
+                            <span class="btn-icon">▶</span>
+                            <span class="btn-text">開始沖煮</span>
+                        </span>
+                        <span class="btn-shine"></span>
+                    </button>
+                </div>
+                
+                <!-- 結果卡片 -->
+                <div class="result-card glass-card" id="resultCard">
+                    <div class="result-header">
+                        <div class="result-score-display">
+                            <div class="score-number" id="scoreNumber">0</div>
+                            <div class="score-label">分數</div>
+                        </div>
+                        <div class="result-grade-badge" id="gradeBadge">-</div>
+                    </div>
+                    <div class="result-feedback" id="resultFeedback"></div>
+                    <div class="result-flavors" id="resultFlavors"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 品嘗動畫模態框 -->
+    <div class="modal-overlay" id="tastingModal">
+        <div class="modal-content tasting-modal">
+            <div class="tasting-scene">
+                <div class="barista-avatar">
+                    <div class="avatar-head">
+                        <div class="avatar-eyes">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                        </div>
+                        <div class="avatar-mouth"></div>
+                    </div>
+                    <div class="avatar-body"></div>
+                </div>
+                <div class="tasting-cup">
+                    <div class="cup-steam"></div>
+                </div>
+                <div class="tasting-message" id="tastingMessage">品嘗中...</div>
+            </div>
+            <div class="verdict-display" id="verdictDisplay"></div>
+        </div>
+    </div>
+
+    <!-- 排行榜模態框 -->
+    <div class="modal-overlay" id="leaderboardModal">
+        <div class="modal-content leaderboard-modal">
+            <div class="modal-header">
+                <h2>🏆 排行榜</h2>
+                <button class="modal-close" onclick="closeLeaderboard()">✕</button>
+            </div>
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" data-tab="all" type="button">全部</button>
+                <button class="tab-btn" data-tab="today" type="button">今日</button>
+                <button class="tab-btn" data-tab="week" type="button">本週</button>
+            </div>
+            <div class="leaderboard-list" id="leaderboardList"></div>
+        </div>
+    </div>
+
+    <!-- 名字輸入模態框 -->
+    <div class="modal-overlay" id="nameModal">
+        <div class="modal-content name-modal">
+            <div class="name-input-scene">
+                <div class="score-showcase">
+                    <div class="showcase-score" id="showcaseScore">0</div>
+                    <div class="showcase-grade" id="showcaseGrade">-</div>
+                </div>
+                <h2>🎉 恭喜完成沖煮！</h2>
+                <p>請輸入你的名字進入排行榜</p>
+                <input type="text" id="nameInput" class="name-input-field" placeholder="輸入名字（2-20字元）" maxlength="20">
+                <div class="name-hint" id="nameHint">請輸入 2-20 個字元</div>
+                <button class="submit-name-btn" id="submitNameBtn" disabled>
+                    <span>提交並查看排行榜</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
