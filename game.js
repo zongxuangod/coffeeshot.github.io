@@ -795,7 +795,7 @@ function showLeaderboard(tab = 'all') {
     }
     
     if (leaderboard.length === 0) {
-        elements.leaderboardList.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">還沒有任何記錄</div>';
+        elements.leaderboardList.innerHTML = '<div style="text-align: center; padding: 40px; color: #666; font-size: 1em;">還沒有任何記錄</div>';
     } else {
         elements.leaderboardList.innerHTML = leaderboard.map((entry, index) => {
             const gradeColor = getGradeColor(entry.grade);
@@ -803,14 +803,14 @@ function showLeaderboard(tab = 'all') {
             
             return `
                 <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; margin-bottom: 10px; ${index < 3 ? 'border-color: rgba(212, 175, 55, 0.3);' : ''}">
-                    <div style="display: flex; align-items: center; gap: 15px; flex: 1;">
-                        <div style="font-size: 1.5em; font-weight: 700; color: #666; min-width: 40px;">${medal || (index + 1)}</div>
-                        <div style="flex: 1;">
-                            <div style="font-size: 1.1em; font-weight: 600; color: #fff; margin-bottom: 5px;">${entry.name}</div>
-                            <div style="font-size: 0.85em; color: #888;">${entry.bean} • ${entry.date}</div>
+                    <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
+                        <div style="font-size: 1.5em; font-weight: 700; color: #666; min-width: 40px; flex-shrink: 0;">${medal || (index + 1)}</div>
+                        <div style="flex: 1; min-width: 0; overflow: hidden;">
+                            <div style="font-size: 1.1em; font-weight: 600; color: #fff; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${entry.name}</div>
+                            <div style="font-size: 0.85em; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${entry.bean} • ${entry.date}</div>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px; flex-shrink: 0;">
                         <div style="font-size: 1.8em; font-weight: 700; color: #d4af37;">${entry.score}</div>
                         <div style="padding: 8px 20px; background: ${gradeColor}; border-radius: 10px; font-weight: 700; font-size: 1.2em;">${entry.grade}</div>
                     </div>
@@ -929,7 +929,47 @@ window.loadPreset = function() {
 
 // 統計
 window.showStats = function() {
-    alert(`統計資訊\n\n最高分數：${gameState.stats.highScore}\n完美沖煮：${gameState.stats.perfectBrews}\n總沖煮次數：${gameState.stats.totalBrews}`);
+    const stats = gameState.stats;
+    
+    // 創建統計模態框
+    const statsHTML = `
+        <div class="modal-overlay active" id="statsModal" style="z-index: 10000;">
+            <div class="modal-content" style="max-width: 500px; padding: 40px; text-align: center;">
+                <h2 style="font-size: 2em; margin-bottom: 30px; color: #d4af37;">📊 統計資訊</h2>
+                
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="font-size: 0.9em; color: #888; margin-bottom: 8px;">最高分數</div>
+                        <div style="font-size: 3em; font-weight: 800; color: #d4af37;">${stats.highScore}</div>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="font-size: 0.9em; color: #888; margin-bottom: 8px;">完美沖煮</div>
+                        <div style="font-size: 3em; font-weight: 800; color: #4caf50;">${stats.perfectBrews}</div>
+                    </div>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div style="font-size: 0.9em; color: #888; margin-bottom: 8px;">總沖煮次數</div>
+                        <div style="font-size: 3em; font-weight: 800; color: #fff;">${stats.totalBrews}</div>
+                    </div>
+                </div>
+                
+                <button onclick="closeStatsModal()" style="margin-top: 30px; padding: 15px 40px; background: linear-gradient(135deg, #d4af37, #f4e5b8); border: none; border-radius: 12px; font-size: 1.1em; font-weight: 700; color: #1a0f0a; cursor: pointer;">
+                    關閉
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', statsHTML);
+};
+
+window.closeStatsModal = function() {
+    const modal = document.getElementById('statsModal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 400);
+    }
 };
 
 // 初始化遊戲
