@@ -244,6 +244,9 @@ body {
 .v60-setup {
     position: relative;
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .v60-dripper-pro {
@@ -286,6 +289,7 @@ body {
         0 15px 40px rgba(0, 0, 0, 0.4);
     overflow: hidden;
     margin-top: -5px;
+    z-index: 1;
 }
 
 .spiral-pattern {
@@ -355,6 +359,7 @@ body {
     background: linear-gradient(135deg, #e8e8e8, #a0a0a0);
     clip-path: polygon(50% 100%, 0% 0%, 100% 0%);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+    z-index: 0;
 }
 
 /* 玻璃壺專業版 */
@@ -1414,22 +1419,37 @@ body {
     
     .nav-btn {
         flex: 1;
+        font-size: 0.9em;
+        padding: 10px 16px;
     }
     
-    .btn-text {
-        display: none;
+    .nav-btn .btn-text {
+        display: inline;
     }
     
     .brew-scene {
-        height: 400px;
+        height: 450px;
     }
     
     .v60-dripper-pro {
-        transform: scale(0.8);
+        width: 180px;
+        height: 160px;
+    }
+    
+    .dripper-rim {
+        width: 180px;
+        height: 20px;
+    }
+    
+    .dripper-cone {
+        width: 180px;
+        height: 130px;
     }
     
     .glass-server {
-        transform: scale(0.8);
+        width: 160px;
+        height: 200px;
+        margin-top: 30px;
     }
     
     .live-data {
@@ -1447,6 +1467,57 @@ body {
     
     .modal-content {
         max-width: 95%;
+        margin: 20px;
+    }
+    
+    .leaderboard-modal {
+        max-width: 100%;
+    }
+    
+    .modal-header h2 {
+        font-size: 1.5em;
+    }
+    
+    .leaderboard-tabs {
+        padding: 15px 20px;
+    }
+    
+    .tab-btn {
+        font-size: 0.85em;
+        padding: 10px 15px;
+    }
+    
+    .leaderboard-list {
+        padding: 15px 20px;
+        font-size: 0.9em;
+    }
+    
+    .leaderboard-list > div {
+        flex-direction: row !important;
+        gap: 10px !important;
+        padding: 12px !important;
+        align-items: center !important;
+    }
+    
+    .leaderboard-list > div > div:first-child {
+        width: auto !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+    
+    .leaderboard-list > div > div:last-child {
+        width: auto !important;
+        flex-shrink: 0 !important;
+        gap: 8px !important;
+    }
+    
+    .leaderboard-list > div > div:last-child > div:first-child {
+        font-size: 1.3em !important;
+    }
+    
+    .leaderboard-list > div > div:last-child > div:last-child {
+        font-size: 1em !important;
+        padding: 6px 12px !important;
     }
     
     .tasting-modal,
@@ -1457,6 +1528,15 @@ body {
     .score-showcase {
         flex-direction: column;
         gap: 15px;
+    }
+    
+    .showcase-score {
+        font-size: 3em;
+    }
+    
+    .showcase-grade {
+        font-size: 2em;
+        padding: 8px 24px;
     }
 }
 
