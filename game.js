@@ -300,6 +300,9 @@ async function startBrewing() {
     elements.brewStartBtn.disabled = true;
     elements.resultCard.classList.remove('show');
     
+    // 自動滾動到沖煮視覺化區域
+    scrollToBrewingScene();
+    
     // 更新狀態
     updateBrewStatus('brewing', '沖煮中');
     elements.progressBar.classList.add('active');
@@ -883,6 +886,29 @@ function loadStats() {
 // 儲存統計
 function saveStats() {
     localStorage.setItem('coffeeStats', JSON.stringify(gameState.stats));
+}
+
+// 自動滾動到沖煮場景
+function scrollToBrewingScene() {
+    // 稍微延遲，讓按鈕動畫完成
+    setTimeout(() => {
+        const brewScene = document.querySelector('.brew-visual-section');
+        if (!brewScene) return;
+        
+        if (window.innerWidth <= 768) {
+            // 手機版：滾動到頁面頂部
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        } else {
+            // 桌面版：滾動到沖煮視覺化區域
+            brewScene.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    }, 200);
 }
 
 // 工具函數
